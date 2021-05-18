@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -37,19 +38,20 @@ class User implements UserInterface
     private $credit;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default":false})
      */
     private $premiumMember;
 
     /**
      * @ORM\OneToMany(targetEntity=Booking::class, mappedBy="client",
-     *     orphanRemoval=true, options={"default":false})
+     *     orphanRemoval=true)
      */
     private $bookings;
 
-    public function __construct()
+    public function __construct(bool $premiumMember)
     {
         $this->bookings = new ArrayCollection();
+        $this->premiumMember = $premiumMember;
     }
 
     public function getId(): ?int

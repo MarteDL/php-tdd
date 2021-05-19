@@ -52,6 +52,12 @@ class Booking
         $this->endDate = $endDate;
     }
 
+    public function bookedTimeInMinutes(): float
+    {
+        return (float)abs(($this->endDate->getTimestamp() -
+                $this->startDate->getTimestamp())/60);
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -65,11 +71,6 @@ class Booking
     public function getEndDate(): \DateTimeInterface
     {
         return $this->endDate;
-    }
-
-    public function bookedTimeInMinutes(): int
-    {
-        return abs(($this->endDate->getTimestamp() - $this->startDate->getTimestamp())/60);
     }
 
     public function getRoom(): ?Room

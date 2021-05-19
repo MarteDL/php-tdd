@@ -34,10 +34,16 @@ class Room
      */
     private $bookings;
 
-    public function __construct(bool $onlyForPremiumMembers)
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $price;
+
+    public function __construct(bool $onlyForPremiumMembers, int $price = 100)
     {
         $this->bookings = new ArrayCollection();
         $this->onlyForPremiumMembers = $onlyForPremiumMembers;
+        $this->price = $price;
     }
 
     function canBook(User $user) : bool
@@ -100,6 +106,18 @@ class Room
                 $booking->setRoom(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(int $price): self
+    {
+        $this->price = $price;
 
         return $this;
     }

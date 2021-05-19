@@ -48,10 +48,16 @@ class User implements UserInterface
      */
     private $bookings;
 
-    public function __construct(bool $premiumMember)
+    public function __construct(bool $premiumMember, int $credit = 100)
     {
         $this->bookings = new ArrayCollection();
         $this->premiumMember = $premiumMember;
+        $this->credit = $credit;
+    }
+
+    public function canAffordRoom(Room $room): bool
+    {
+        return $this->credit >= $room->getPrice();
     }
 
     public function getId(): ?int
@@ -177,4 +183,5 @@ class User implements UserInterface
 
         return $this;
     }
+
 }

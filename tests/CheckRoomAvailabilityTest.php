@@ -42,7 +42,8 @@ class CheckRoomAvailabilityTest extends TestCase
                 false],
             [new \DateTime(), (new \DateTime())->add(new \DateInterval('PT241M')), false],
             [new \DateTime(), (new \DateTime())->add(new \DateInterval('P2D')), false],
-            [new \DateTime(), (new \DateTime())->add(new \DateInterval('PT2S')), true],
+            [new \DateTime(), (new \DateTime())->add(new \DateInterval('PT14401S')),
+                false],
             [new \DateTime(), (new \DateTime())->add(new \DateInterval('PT4H')), true],
         ];
     }
@@ -55,6 +56,29 @@ class CheckRoomAvailabilityTest extends TestCase
         $booking = new Booking($startDate, $endDate);
         $bookedTime = $booking->bookedTimeInMinutes();
 
-        $this->assertEquals($expectedOutput, $bookedTime <= 240);
+        $this->assertEquals($expectedOutput, $bookedTime <= 240.00);
+    }
+
+    public function dataProviderForUserCanAffordRoom(): array
+    {
+        return [
+            [new User(false), new Room(false, 200), false],
+            [new User(false, 200), new Room(false, 200), true],
+            [new User(false, 300), new Room(false, 200), true],
+            [new User(false, -100), new Room(false, 200), false],
+            [new User(false), new Room(false, 50), true],
+            [new User(false), new Room(false, 100), true],
+            [new User(false), new Room(false, 0), true],
+            [new User(false), new Room(false, 150), false],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForUserCanAffordRoom
+     */
+    public function testUserCanAffordRoom(User $user, Room $room, bool $expectedOutput):
+    void
+    {
+        $this->assertEquals($expectedOutput, $user->canAffordRoom($room));
     }
 }

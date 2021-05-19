@@ -39,33 +39,37 @@ class Booking
      */
     private $client;
 
+    /**
+     * Booking constructor.
+     * @param $startDate
+     * @param $endDate
+     * @param $room
+     * @param $client
+     */
+    public function __construct(\DateTime $startDate, \DateTime $endDate)
+    {
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getStartDate(): ?\DateTimeInterface
+    public function getStartDate(): \DateTimeInterface
     {
         return $this->startDate;
     }
 
-    public function setStartDate(\DateTimeInterface $startDate): self
-    {
-        $this->startDate = $startDate;
-
-        return $this;
-    }
-
-    public function getEndDate(): ?\DateTimeInterface
+    public function getEndDate(): \DateTimeInterface
     {
         return $this->endDate;
     }
 
-    public function setEndDate(\DateTimeInterface $endDate): self
+    public function bookedTimeInMinutes(): int
     {
-        $this->endDate = $endDate;
-
-        return $this;
+        return abs(($this->endDate->getTimestamp() - $this->startDate->getTimestamp())/60);
     }
 
     public function getRoom(): ?Room

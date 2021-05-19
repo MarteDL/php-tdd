@@ -46,9 +46,29 @@ class Room
         $this->price = $price;
     }
 
-    function canBook(User $user) : bool
+    function canBook(User $user): bool
     {
         return ($this->onlyForPremiumMembers && $user->getPremiumMember()) || !$this->onlyForPremiumMembers;
+    }
+
+    public function isAvailableForBooking(Booking $reservation): bool
+    {
+        foreach ($this->bookings as $booking){
+
+            if ($booking->getStartDate() <= $reservation->getStartDate() &&
+                $reservation->getStartDate() <=
+                $booking->getEndDate()){
+                return false;
+            }
+
+            if ($booking->getStartDate() <= $reservation->getEndDate() &&
+                    $reservation->getEndDate() <=
+                    $booking->getEndDate()){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function getId(): ?int

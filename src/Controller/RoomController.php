@@ -24,7 +24,7 @@ class RoomController extends AbstractController
     #[Route('/new', name: 'room_new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
-        $room = new Room();
+        $room = new Room(false);
         $form = $this->createForm(RoomType::class, $room);
         $form->handleRequest($request);
 

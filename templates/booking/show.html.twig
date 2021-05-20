@@ -3,28 +3,42 @@
 {% block title %}Booking{% endblock %}
 
 {% block body %}
-    <h1>Booking</h1>
+    <main class="container mb-5 pb-5">
+        <h1 class="text-center m-5">Booking {{ booking.id }}</h1>
 
-    <table class="table">
-        <tbody>
+        <div class="mb-5 d-flex justify-content-end">
+
+        </div>
+
+        <table class="table">
+            <tbody>
             <tr>
                 <th>Id</th>
                 <td>{{ booking.id }}</td>
             </tr>
             <tr>
                 <th>StartDate</th>
-                <td>{{ booking.startDate ? booking.startDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ booking.startDate|date('d-m-Y H:i') }}</td>
             </tr>
             <tr>
                 <th>EndDate</th>
-                <td>{{ booking.endDate ? booking.endDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ booking.endDate|date('d-m-Y H:i') }}</td>
             </tr>
-        </tbody>
-    </table>
+            <tr>
+                <th>Room</th>
+                <td>{{ booking.room }}</td>
+            </tr>
+            <tr>
+                <th>Client</th>
+                <td>{{ booking.client }}</td>
+            </tr>
+            </tbody>
+        </table>
 
-    <a href="{{ path('booking_index') }}">back to list</a>
+        <a href="{{ path('booking_index') }}">back to list</a>
 
-    <a href="{{ path('booking_edit', {'id': booking.id}) }}">edit</a>
+        <a href="{{ path('booking_edit', {'id': booking.id}) }}">edit</a>
 
-    {{ include('booking/_delete_form.html.twig') }}
+        {{ include('booking/_delete_form.html.twig') }}
+    </main>
 {% endblock %}

@@ -6,12 +6,15 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
+ * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
  */
 class User implements UserInterface
 {
@@ -48,6 +51,11 @@ class User implements UserInterface
      */
     private $bookings;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $password;
+
     public function __construct(bool $premiumMember, int $credit = 100)
     {
         $this->bookings = new ArrayCollection();
@@ -57,10 +65,7 @@ class User implements UserInterface
 
     public function canAffordBooking(Booking $booking): bool
     {
-        $bookingInHours = (int)ceil(($booking->bookedTimeInMinutes()/60));
-        $cost = 2 * $bookingInHours;
-
-        return $this->credit >= $cost;
+        return $this->credit >= $booking->calculateCost();
     }
 
     public function getId(): ?int
@@ -185,6 +190,18 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    #[Pure] public function __toString(): string
+    {
+        return $this->getUsername();
     }
 
 }

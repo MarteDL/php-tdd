@@ -58,6 +58,12 @@ class Booking
                 $this->startDate->getTimestamp())/60);
     }
 
+    public function calculateCost(): int
+    {
+        $bookingInHours = round(($this->bookedTimeInMinutes()/60), 1);
+        return (int)(2 * $bookingInHours);
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -66,6 +72,22 @@ class Booking
     public function getStartDate(): \DateTimeInterface
     {
         return $this->startDate;
+    }
+
+    /**
+     * @param \DateTime $startDate
+     */
+    public function setStartDate(\DateTime $startDate): void
+    {
+        $this->startDate = $startDate;
+    }
+
+    /**
+     * @param \DateTime $endDate
+     */
+    public function setEndDate(\DateTime $endDate): void
+    {
+        $this->endDate = $endDate;
     }
 
     public function getEndDate(): \DateTimeInterface

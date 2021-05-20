@@ -55,9 +55,12 @@ class User implements UserInterface
         $this->credit = $credit;
     }
 
-    public function canAffordRoom(Room $room): bool
+    public function canAffordBooking(Booking $booking): bool
     {
-        return $this->credit >= $room->getPrice();
+        $bookingInHours = (int)ceil(($booking->bookedTimeInMinutes()/60));
+        $cost = 2 * $bookingInHours;
+
+        return $this->credit >= $cost;
     }
 
     public function getId(): ?int

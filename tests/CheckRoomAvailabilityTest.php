@@ -60,53 +60,88 @@ class CheckRoomAvailabilityTest extends TestCase
         $this->assertEquals($expectedOutput, $bookedTime <= 240.00);
     }
 
-    public function dataProviderForUserCanAffordRoom(): array
+    public function dataProviderForUserCanAffordBooking(): array
     {
         return [
-            [new User(false), new Room(false, 200), false],
-            [new User(false, 200), new Room(false, 200), true],
-            [new User(false, 300), new Room(false, 200), true],
-            [new User(false, -100), new Room(false, 200), false],
-            [new User(false), new Room(false, 50), true],
-            [new User(false), new Room(false, 100), true],
-            [new User(false), new Room(false, 0), true],
-            [new User(false), new Room(false, 150), false],
+            [new User(false), new Booking(new \DateTime('2021-02-02 14:00'), (new
+            \DateTime('2021-02-02 18:00'))), true],
+            [new User(false, 10), new Booking(new \DateTime('2021-02-02 15:00'), (new \DateTime('2021-02-02 18:00'))), true],
+            [new User(false, 8), new Booking(new \DateTime('2021-02-02 15:00'), (new
+            \DateTime('2021-02-02 19:00'))), true],
+            [new User(false, 50), new Booking(new \DateTime('2021-02-02 15:00'), (new
+            \DateTime('2021-02-02 18:00'))), true],
+            [new User(false, 0), new Booking(new \DateTime('2021-02-02 15:00'), (new
+            \DateTime('2021-02-02 18:00'))), false],
+            [new User(false, 2), new Booking(new \DateTime('2021-02-02 15:00'), (new
+            \DateTime('2021-02-02 18:00'))), false],
+            [new User(false, 6), new Booking(new \DateTime('2021-02-02 15:00'), (new \DateTime('2021-02-02 18:00'))), true],
         ];
     }
 
     /**
-     * @dataProvider dataProviderForUserCanAffordRoom
+     * @dataProvider dataProviderForUserCanAffordBooking
      */
-    public function testUserCanAffordRoom(User $user, Room $room, bool $expectedOutput):
+    public function testUserCanAffordBooking(User $user, Booking $booking, bool
+    $expectedOutput):
     void
     {
-        $this->assertEquals($expectedOutput, $user->canAffordRoom($room));
+        $this->assertEquals($expectedOutput, $user->canAffordBooking($booking));
     }
 
     public function dataProviderForRoomIsAvailable(): array
     {
         return [
             [
-                new Booking(new \DateTime('2021-02-01 15:00:00'), (new \DateTime('2021-02-01 18:00:00'))),
-                new Booking(new \DateTime('2021-02-02 15:00:00'), (new \DateTime('2021-02-02 18:00:00'))),
-                new Booking(new \DateTime('2021-02-02 16:00:00'), (new \DateTime('2021-02-02 19:00:00'))),
-                new Room(false),
+                new Booking(new \DateTime('2021-02-02 15:00'), (new \DateTime('2021-02-02 18:00'))),
+                new Booking(new \DateTime('2021-02-02 16:00'), (new \DateTime('2021-02-02 19:00'))),
                 false
-            ]
+            ],
+            [
+                new Booking(new \DateTime('2021-02-02 15:00'), (new \DateTime('2021-02-02 18:00'))),
+                new Booking(new \DateTime('2021-02-02 15:00'), (new \DateTime('2021-02-02 18:00'))),
+                false
+            ],
+            [
+                new Booking(new \DateTime('2021-02-02 15:00'), (new \DateTime('2021-02-02 18:00'))),
+                new Booking(new \DateTime('2021-02-01 16:00'), (new \DateTime('2021-02-01 19:00'))),
+                true
+            ],
+            [
+                new Booking(new \DateTime('2021-02-02 15:00'), (new \DateTime('2021-02-02 18:00'))),
+                new Booking(new \DateTime('2021-02-2 12:00'), (new \DateTime('2021-02-02 15:01'))),
+                false
+            ],
+            [
+                new Booking(new \DateTime('2021-02-02 15:00'), (new \DateTime('2021-02-02 18:00'))),
+                new Booking(new \DateTime('2021-02-02 15:00'), (new \DateTime('2021-02-02 19:00'))),
+                false
+            ],
+            [
+                new Booking(new \DateTime('2021-02-02 15:00'), (new \DateTime('2021-02-02 18:00'))),
+                new Booking(new \DateTime('2021-02-02 10:00'), (new \DateTime('2021-02-02 12:00'))),
+                true
+            ],
+            [
+                new Booking(new \DateTime('2021-02-02 15:00'), (new \DateTime('2021-02-02 18:00'))),
+                new Booking(new \DateTime('2021-02-02 11:00'), (new \DateTime('2021-02-02 15:00'))),
+                true
+            ],
+            [
+                new Booking(new \DateTime('2021-02-02 15:00'), (new \DateTime('2021-02-02 18:00'))),
+                new Booking(new \DateTime('2021-02-02 18:00'), (new \DateTime('2021-02-02 22:00'))),
+                true
+            ],
         ];
     }
 
     /**
      * @dataProvider dataProviderForRoomIsAvailable
      */
-    public function testRoomIsAvailable(Booking $booking1, Booking $booking2, Booking $booking3, Room $room, bool $expectedOutput): void
+    public function testRoomIsAvailable(Booking $booking1, Booking $booking2, bool $expectedOutput): void
     {
+        $room = new Room(false);
         $room->addBooking($booking1);
-        $room->addBooking($booking2);
 
-        fwrite(STDOUT, print_r($room, TRUE));
-        fwrite(STDOUT, print_r($booking3, TRUE));
-
-        $this->assertEquals($expectedOutput, $room->isAvailableForBooking($booking3));
+        $this->assertEquals($expectedOutput, $room->isAvailableForBooking($booking2));
     }
 }

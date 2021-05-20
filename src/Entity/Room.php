@@ -34,16 +34,10 @@ class Room
      */
     private $bookings;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $price;
-
-    public function __construct(bool $onlyForPremiumMembers, int $price = 100)
+    public function __construct(bool $onlyForPremiumMembers)
     {
         $this->bookings = new ArrayCollection();
         $this->onlyForPremiumMembers = $onlyForPremiumMembers;
-        $this->price = $price;
     }
 
     function canBook(User $user): bool
@@ -56,12 +50,12 @@ class Room
         foreach ($this->bookings as $booking){
 
             if ($booking->getStartDate() <= $reservation->getStartDate() &&
-                $reservation->getStartDate() <=
+                $reservation->getStartDate() <
                 $booking->getEndDate()){
                 return false;
             }
 
-            if ($booking->getStartDate() <= $reservation->getEndDate() &&
+            if ($booking->getStartDate() < $reservation->getEndDate() &&
                     $reservation->getEndDate() <=
                     $booking->getEndDate()){
                 return false;
@@ -126,18 +120,6 @@ class Room
                 $booking->setRoom(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getPrice(): ?int
-    {
-        return $this->price;
-    }
-
-    public function setPrice(int $price): self
-    {
-        $this->price = $price;
 
         return $this;
     }

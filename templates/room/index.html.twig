@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Room index{% endblock %}
+
+{% block body %}
+    <main class="container mb-5 pb-5">
+        <h1 class="text-center m-5">Our Rooms</h1>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>OnlyForPremiumMembers</th>
+                <th>actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for room in rooms %}
+                <tr>
+                    <td>{{ room.id }}</td>
+                    <td>{{ room.name }}</td>
+                    <td>{{ room.onlyForPremiumMembers ? 'Yes' : 'No' }}</td>
+                    <td>
+                        <a href="{{ path('booking_new', {'room': room.id}) }}">Book</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </main>
+{% endblock %}
